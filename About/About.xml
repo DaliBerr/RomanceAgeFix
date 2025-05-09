@@ -1,0 +1,9 @@
+<ModMetaData>
+  <name>RomanceAgeFix</name>
+  <author>Aquin</author>
+  <description>这是一个mod</description>
+  <packageId>com.Aquin.RomanceAgeFix</packageId>
+  <supportedVersions>
+    <li>1.5</li>
+  </supportedVersions>
+</ModMetaData>
