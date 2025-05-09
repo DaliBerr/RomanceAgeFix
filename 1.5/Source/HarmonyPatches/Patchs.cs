@@ -2,6 +2,7 @@ using Verse;
 using HarmonyLib;
 using RimWorld;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace RomanceAgeFix.HarmonyPatches
 {
@@ -48,7 +49,7 @@ namespace RomanceAgeFix.HarmonyPatches
             __result = baseChance * num * num2 * num3;
             return;
         }
-        private static float SecondaryLovinChanceFactor(Pawn pawn, Pawn otherPawn, float minRequiredAge)
+        public static float SecondaryLovinChanceFactor(Pawn pawn, Pawn otherPawn, float minRequiredAge)
         {
             if (pawn == otherPawn)
             {
@@ -91,33 +92,22 @@ namespace RomanceAgeFix.HarmonyPatches
         private static float LovinAgeFactor(Pawn pawn, Pawn otherPawn)
         {
             float num = 1f;
-            float expectancyLiftHuman = ThingDefOf.Human.race.lifeExpectancy;
+            
+            // float expectancyLiftHuman = ThingDefOf.Human.race.lifeExpectancy;
             float expectancyLife1 = pawn.RaceProps.lifeExpectancy;
             float expectancyLife2 = otherPawn.RaceProps.lifeExpectancy;
+            float age1 = RomanceAgeFix.AgeFix.RomanceAgeOverride(pawn);
+            float age2 = RomanceAgeFix.AgeFix.RomanceAgeOverride(otherPawn);
 
-            float age1 = pawn.ageTracker.AgeBiologicalYearsFloat;
-            float age2 = otherPawn.ageTracker.AgeBiologicalYearsFloat;
-
-            if(expectancyLife1 > expectancyLiftHuman && age1 > expectancyLiftHuman){
-                age1 /= expectancyLife1;
-                if(age1 < 16f){
-                    age1 = 16f;
-                }
-            }
-            if(expectancyLife2 > expectancyLiftHuman && age2 > expectancyLiftHuman){
-                age2 /= expectancyLife2;
-                if(age2 < 16f){
-                    age2 = 16f;
-                }
-            }
             float malemin = expectancyLife1 * .375f;
-            float malelower = expectancyLife1 * .125f;
-            float maleupper = expectancyLife1 * .0375f;
-            float malemax = expectancyLife1 * .125f;
-            float femalemin = expectancyLife1 * .125f;
-            float femalelower = expectancyLife1 * .0375f;
-            float femaleupper = expectancyLife1 * .125f;
-            float femalemax = expectancyLife1 * .375f;
+            float malelower = expectancyLife1 * .25f;
+            float maleupper = expectancyLife1 * .075f;
+            float malemax = expectancyLife1 * .25f;
+
+            float femalemin = expectancyLife2 * .1875f;
+            float femalelower = expectancyLife2 * .1f;
+            float femaleupper = expectancyLife2 * .1875f;
+            float femalemax = expectancyLife2 * .5f;
 
             if (pawn.gender == Gender.Male)
             {
@@ -125,7 +115,7 @@ namespace RomanceAgeFix.HarmonyPatches
                 float lower = age1 - malelower;
                 float upper = age1 + maleupper;
                 float max = age1 + malemax;
-                num = GenMath.FlatHill(0.2f, min, lower, upper, max, 0.2f, age2);
+                num = GenMath.FlatHill(0.2f, min, lower, upper, max, 0.2f, age1);
             }
             else if (pawn.gender == Gender.Female)
             {
@@ -137,6 +127,78 @@ namespace RomanceAgeFix.HarmonyPatches
             }
             // Log.Warning( "pawn "+ pawn.Name + "with "+ otherPawn.Name +" AgeFactor: " + num);
             return num;
+        }
+    }
+
+    [HarmonyPatch(typeof(LovePartnerRelationUtility),"GetLovinMtbHours")]
+    public static class Postfix_GetLovinMtbHours
+    {
+        public static void GetLovinMtbHours_Postfix(Pawn pawn, Pawn partner, ref float __result){
+            if (pawn.Dead || partner.Dead)
+            {
+                __result = -1f;
+                return;
+                // return -1f;
+            }
+
+            if (DebugSettings.alwaysDoLovin)
+            {
+                __result = 0.1f;
+                return;
+                // return 0.1f;
+            }
+
+            if (pawn.needs.food.Starving || partner.needs.food.Starving)
+            {
+                __result = -1f;
+                return; 
+                // return -1f;
+            }
+
+            if (pawn.health.hediffSet.BleedRateTotal > 0f || partner.health.hediffSet.BleedRateTotal > 0f)
+            {
+                __result = -1f;
+                return;
+                // return -1f;
+            }
+
+            if (pawn.health.hediffSet.InLabor() || partner.health.hediffSet.InLabor())
+            {
+                __result = -1f;
+                return;
+                // return -1f;
+            }
+            float num = LovinMtbSinglePawnFactor(pawn);
+            float num2 = LovinMtbSinglePawnFactor(partner);
+            if(num < 0f || num2 < 0f){
+                __result = -1f;
+                return;
+            }
+            float num3 = 12f;
+            num3 *= num;
+            num3 *= num2;
+            num3 /= Mathf.Max(Prefix_MinAgeForRomance.SecondaryLovinChanceFactor(pawn,partner,Prefix_MinAgeForRomance.requiredMinAge), 0.1f);
+            num3 *= GenMath.LerpDouble(-100f, 100f, 1.3f, 0.7f, pawn.relations.OpinionOf(partner));
+            num3 *= GenMath.LerpDouble(-100f, 100f, 1.3f, 0.7f, partner.relations.OpinionOf(pawn));
+            if (pawn.health.hediffSet.HasHediff(HediffDefOf.PsychicLove))
+            {
+                num3 /= 4f;
+            }
+
+            __result = num3;
+            return;
+        }
+
+        private static float LovinMtbSinglePawnFactor(Pawn pawn)
+        {
+            float num = 1f;
+            num /= 1f - pawn.health.hediffSet.PainTotal;
+            float level = pawn.health.capacities.GetLevel(PawnCapacityDefOf.Consciousness);
+            if (level < 0.5f)
+            {
+                num /= level * 2f;
+            }
+            return num / GenMath.FlatHill(0f, 14f, 16f, 25f, 80f, 0.2f, RomanceAgeFix.AgeFix.RomanceAgeOverride(pawn));
         }
     }
 }
