@@ -8,9 +8,9 @@ namespace RomanceAgeFix.Startup
     {
         static HarmonyInit()
         {
-            var harmony = new Harmony("com.phepholia");
+            var harmony = new Harmony("com.romanceagefix");
             harmony.PatchAll();
-            Log.Message("[phepholia] Harmony patches applied");
+            // Log.Message("[romanceagefix] Harmony patches applied");
         }
     }
 }
