@@ -11,14 +11,14 @@ namespace RomanceAgeFix.HarmonyPatches
     {
         public static int requiredMinAge = 16;
         [HarmonyPostfix]
-        public static void SecondaryRomanceChanceFactor_Prefix(Pawn ___pawn, Pawn otherPawn, ref float __result)
+        public static void SecondaryRomanceChanceFactor_Postfix(Pawn ___pawn, Pawn otherPawn, ref float __result)
         {
 
-            Pawn pawn = ___pawn;         
+            Pawn pawn = ___pawn;
             if (pawn.ageTracker.AgeBiologicalYears < requiredMinAge || otherPawn.ageTracker.AgeBiologicalYears < requiredMinAge)
             {
                 __result = 0f;
-                return; 
+                return;
             }
             float num = 1f;
             foreach (PawnRelationDef relation in pawn.GetRelations(otherPawn))
@@ -58,9 +58,10 @@ namespace RomanceAgeFix.HarmonyPatches
             }
             if (pawn.story != null && pawn.story.traits != null)
             {
-                if (pawn.story.traits.HasTrait(TraitDefOf.Asexual)){
+                if (pawn.story.traits.HasTrait(TraitDefOf.Asexual))
+                {
                     // Log.Warning("pawn "+ pawn.Name + "with "+ otherPawn.Name +" Asexual: " + pawn.story.traits.HasTrait(TraitDefOf.Asexual));
-                    return 0f;                
+                    return 0f;
                 }
                 if (!pawn.story.traits.HasTrait(TraitDefOf.Bisexual))
                 {
@@ -92,7 +93,7 @@ namespace RomanceAgeFix.HarmonyPatches
         private static float LovinAgeFactor(Pawn pawn, Pawn otherPawn)
         {
             float num = 1f;
-            
+
             // float expectancyLiftHuman = ThingDefOf.Human.race.lifeExpectancy;
             float expectancyLife1 = pawn.RaceProps.lifeExpectancy;
             float expectancyLife2 = otherPawn.RaceProps.lifeExpectancy;
@@ -130,10 +131,12 @@ namespace RomanceAgeFix.HarmonyPatches
         }
     }
 
-    [HarmonyPatch(typeof(LovePartnerRelationUtility),"GetLovinMtbHours")]
+    [HarmonyPatch(typeof(LovePartnerRelationUtility), "GetLovinMtbHours")]
     public static class Postfix_GetLovinMtbHours
     {
-        public static void GetLovinMtbHours_Postfix(Pawn pawn, Pawn partner, ref float __result){
+        [HarmonyPostfix]
+        public static void GetLovinMtbHours_Postfix(Pawn pawn, Pawn partner, ref float __result)
+        {
             if (pawn.Dead || partner.Dead)
             {
                 __result = -1f;
@@ -151,7 +154,7 @@ namespace RomanceAgeFix.HarmonyPatches
             if (pawn.needs.food.Starving || partner.needs.food.Starving)
             {
                 __result = -1f;
-                return; 
+                return;
                 // return -1f;
             }
 
@@ -170,14 +173,15 @@ namespace RomanceAgeFix.HarmonyPatches
             }
             float num = LovinMtbSinglePawnFactor(pawn);
             float num2 = LovinMtbSinglePawnFactor(partner);
-            if(num < 0f || num2 < 0f){
+            if (num < 0f || num2 < 0f)
+            {
                 __result = -1f;
                 return;
             }
             float num3 = 12f;
             num3 *= num;
             num3 *= num2;
-            num3 /= Mathf.Max(Prefix_MinAgeForRomance.SecondaryLovinChanceFactor(pawn,partner,Prefix_MinAgeForRomance.requiredMinAge), 0.1f);
+            num3 /= Mathf.Max(Prefix_MinAgeForRomance.SecondaryLovinChanceFactor(pawn, partner, Prefix_MinAgeForRomance.requiredMinAge), 0.1f);
             num3 *= GenMath.LerpDouble(-100f, 100f, 1.3f, 0.7f, pawn.relations.OpinionOf(partner));
             num3 *= GenMath.LerpDouble(-100f, 100f, 1.3f, 0.7f, partner.relations.OpinionOf(pawn));
             if (pawn.health.hediffSet.HasHediff(HediffDefOf.PsychicLove))
@@ -199,6 +203,49 @@ namespace RomanceAgeFix.HarmonyPatches
                 num /= level * 2f;
             }
             return num / GenMath.FlatHill(0f, 14f, 16f, 25f, 80f, 0.2f, RomanceAgeFix.AgeFix.RomanceAgeOverride(pawn));
+        }
+    }
+
+    // [HarmonyPatch(typeof(RitualOutcomeEffectWorker_ChildBirth), "Apply")]
+    // public static class Prefix_RitualOutcomeEffectWorker_ChildBirth
+    // {
+    //     [HarmonyPrefix]
+    //     public static bool Apply_Prefix(RitualOutcomeEffectWorker_ChildBirth __instance,
+    //      float progress, Dictionary<Pawn, int> totalPresence, LordJob_Ritual jobRitual)
+    //     {
+    //         if (progress != 0f)
+    //         {
+    //             Pawn mother = jobRitual.assignments.FirstAssignedPawn("mother");
+    //             // float quality = Utils.GetQuality(__instance, jobRitual, progress, mother);
+    //             float quality = __instance.GetQuality(jobRitual, progress);
+    //             RitualOutcomePossibility outcome = __instance.GetOutcome(quality, jobRitual);
+    //             // Pawn pawn = jobRitual.assignments.FirstAssignedPawn("mother");
+    //             Pawn doctor = jobRitual.assignments.FirstAssignedPawn("doctor");
+    //             Hediff_LaborPushing hediff_LaborPushing = (Hediff_LaborPushing)mother.health.hediffSet.GetFirstHediffOfDef(HediffDefOf.PregnancyLaborPushing);
+    //             PregnancyUtility.ApplyBirthOutcome(outcome, quality, jobRitual.Ritual, hediff_LaborPushing.geneSet?.GenesListForReading, hediff_LaborPushing.Mother ?? mother, mother, hediff_LaborPushing.Father, doctor, jobRitual, jobRitual.assignments);
+    //         }
+    //         return false; // Skip original method execution
+    //     }
+
+    // }
+    [HarmonyPatch(typeof(RitualOutcomeEffectWorker_FromQuality), "GetQuality")]
+    public static class Prefix_RitualOutcomeEffectWorker_FromQuality_GetQuality
+    {
+        [HarmonyPrefix]
+        public static bool GetQuality_Prefix(
+        RitualOutcomeEffectWorker_FromQuality __instance,
+        ref float __result,
+        LordJob_Ritual jobRitual,
+        float progress)
+        {
+            if (__instance is RitualOutcomeEffectWorker_ChildBirth && jobRitual.assignments.FirstAssignedPawn("mother") is Pawn mother)
+            {
+                __result = Utils.GetQuality((RitualOutcomeEffectWorker_ChildBirth)__instance, jobRitual, progress, mother);
+                Log.Warning("Skipping original GetQuality method ");
+                return false; // Skip original method
+            }
+            Log.Warning("Using original GetQuality method for other rituals");
+            return true; // Use original for other rituals
         }
     }
 }
