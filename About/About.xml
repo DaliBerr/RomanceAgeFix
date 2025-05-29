@@ -3,19 +3,22 @@
   <author>Aquin</author>
   <description>
     2025年5月30日更新：
+
     同时添加了生育年龄的修改，替换为了本mod中的计算方法，让长生种生育不会再有额外的年龄惩罚。
+    尽管在仪式中不会显示出来，但是在实际计算中会生效。
 
     Updated on May 30, 2025:
-    Added fertility age modification on
-    replacing the original calculation method with the one in this mod, allowing
-    long-lived races to reproduce without additional age penalties.
-    
+
+    Added fertility age modification on replacing the original calculation method with the one in this mod, allowing long-lived races to reproduce without additional age penalties.
+    Although it won't be displayed in the ritual, it will take effect in actual calculations.
     ----------------------------------------------------------
     这个mod修改了对于长生种的恋爱几率中年龄因素的影响，让她们能够更好的和短生种相爱了。
 
-    This mod modifies the effect of age on romance probability for long-lived races,
-     allowing them to better love short-lived races.
+    This mod modifies the effect of age on romance probability for long-lived races,allowing them to better love short-lived races.
 
+
+    应该支持所有外星人种族mod。
+    Compatible with all alien Race mods.
   </description>
   <packageId>com.Aquin.RomanceAgeFix</packageId>
   <modDependencies>
