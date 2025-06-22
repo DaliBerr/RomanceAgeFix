@@ -1,0 +1,10 @@
+C:\Code\C#\RomanceAgeFix\1.5\Assemblies\net472\RomanceAgeFix.dll
+C:\Code\C#\RomanceAgeFix\1.5\Assemblies\net472\RomanceAgeFix.pdb
+C:\Code\C#\RomanceAgeFix\1.5\Source\obj\Debug\net472\RomanceAgeFix.csproj.AssemblyReference.cache
+C:\Code\C#\RomanceAgeFix\1.5\Source\obj\Debug\net472\RomanceAgeFix.GeneratedMSBuildEditorConfig.editorconfig
+C:\Code\C#\RomanceAgeFix\1.5\Source\obj\Debug\net472\RomanceAgeFix.AssemblyInfoInputs.cache
+C:\Code\C#\RomanceAgeFix\1.5\Source\obj\Debug\net472\RomanceAgeFix.AssemblyInfo.cs
+C:\Code\C#\RomanceAgeFix\1.5\Source\obj\Debug\net472\RomanceAgeFix.csproj.CoreCompileInputs.cache
+C:\Code\C#\RomanceAgeFix\1.5\Source\obj\Debug\net472\RomanceAgeFix.dll
+C:\Code\C#\RomanceAgeFix\1.5\Source\obj\Debug\net472\RomanceAgeFix.pdb
+C:\Code\C#\RomanceAgeFix\1.5\Source\obj\Debug\net472\RomanceAgeFix.sourcelink.json

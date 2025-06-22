@@ -1,0 +1,10 @@
+C:\Code\C#\PHEphilia\1.5\Assemblies\net472\Phephilia.dll
+C:\Code\C#\PHEphilia\1.5\Assemblies\net472\Phephilia.pdb
+C:\Code\C#\PHEphilia\1.5\Source\obj\Debug\net472\phephilia.csproj.AssemblyReference.cache
+C:\Code\C#\PHEphilia\1.5\Source\obj\Debug\net472\phephilia.GeneratedMSBuildEditorConfig.editorconfig
+C:\Code\C#\PHEphilia\1.5\Source\obj\Debug\net472\phephilia.AssemblyInfoInputs.cache
+C:\Code\C#\PHEphilia\1.5\Source\obj\Debug\net472\phephilia.AssemblyInfo.cs
+C:\Code\C#\PHEphilia\1.5\Source\obj\Debug\net472\phephilia.csproj.CoreCompileInputs.cache
+C:\Code\C#\PHEphilia\1.5\Source\obj\Debug\net472\phephilia.csproj.Up2Date
+C:\Code\C#\PHEphilia\1.5\Source\obj\Debug\net472\Phephilia.dll
+C:\Code\C#\PHEphilia\1.5\Source\obj\Debug\net472\Phephilia.pdb
