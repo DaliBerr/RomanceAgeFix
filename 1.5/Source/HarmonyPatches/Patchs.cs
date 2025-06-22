@@ -264,28 +264,30 @@ namespace RomanceAgeFix.HarmonyPatches
         public static void ShouldHaveThought_Postfix(Pawn p, ref ThoughtState __result)
         {
             if (p.Faction != Faction.OfPlayer)
-			{
-				__result= ThoughtState.Inactive;
-			}
-			if (p.IsSlave)
-			{
-				__result= ThoughtState.Inactive;
-			}
-			if (p.ageTracker == null)
-			{
-				__result= ThoughtState.Inactive;
-			}
-			if (AgeFix.AgeReversalDemandedAgeOverride(p) < (25f/80f))
             {
-                __result= ThoughtState.Inactive;
-            }
-			{
-				__result= ThoughtState.Inactive;
+                __result = ThoughtState.Inactive;
+                return;
 			}
+            if (p.IsSlave)
+            {
+                __result = ThoughtState.Inactive;
+                return;
+			}
+            if (p.ageTracker == null)
+            {
+                __result = ThoughtState.Inactive;
+                return;
+			}
+            if (AgeFix.AgeReversalDemandedAgeOverride(p) < (25f / 80f))
+            {
+                __result = ThoughtState.Inactive;
+                return;
+            }
 			long ageReversalDemandedDeadlineTicks = p.ageTracker.AgeReversalDemandedDeadlineTicks;
-			if (ageReversalDemandedDeadlineTicks > 0L)
-			{
-				__result= ThoughtState.ActiveAtStage(3);
+            if (ageReversalDemandedDeadlineTicks > 0L)
+            {
+                __result = ThoughtState.ActiveAtStage(3);
+                return;
 			}
 			long num = -ageReversalDemandedDeadlineTicks / 60000L;
 			int num2;
