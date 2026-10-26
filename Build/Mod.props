@@ -1,0 +1,26 @@
+<Project>
+  <PropertyGroup>
+    <ModRoot>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..'))</ModRoot>
+    <AssemblyName>RomanceAgeFix</AssemblyName>
+    <RootNamespace>RomanceAgeFix</RootNamespace>
+    <LangVersion>latest</LangVersion>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <OutputPath>$(ModRoot)/Build/bin/$(ModVersion)/$(Configuration)/</OutputPath>
+    <RimWorldPath Condition="'$(RimWorldPath)' == ''">C:/Program Files (x86)/Steam/steamapps/common/RimWorld</RimWorldPath>
+    <RimWorldManagedPath Condition="'$(RimWorldManagedPath)' == '' and '$(ModVersion)' != '1.7'">$(ModRoot)/$(ModVersion)/ExternalMods</RimWorldManagedPath>
+    <RimWorldManagedPath Condition="'$(RimWorldManagedPath)' == '' and '$(ModVersion)' == '1.7'">$(RimWorldPath)</RimWorldManagedPath>
+    <HarmonyAssemblyPath Condition="'$(HarmonyAssemblyPath)' == '' and '$(ModVersion)' != '1.7'">$(ModRoot)/$(ModVersion)/ExternalMods/0Harmony.dll</HarmonyAssemblyPath>
+    <HarmonyAssemblyPath Condition="'$(HarmonyAssemblyPath)' == '' and '$(ModVersion)' == '1.7'">$(RimWorldPath)/../../workshop/content/294100/2009463077/1.7/Assemblies/0Harmony.dll</HarmonyAssemblyPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Assembly-CSharp"><HintPath>$(RimWorldManagedPath)/Assembly-CSharp.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="0Harmony"><HintPath>$(HarmonyAssemblyPath)</HintPath><Private>false</Private></Reference>
+  </ItemGroup>
+  <ItemGroup Condition="'$(ModVersion)' != '1.7'">
+    <Reference Include="UnityEngine"><HintPath>$(RimWorldManagedPath)/UnityEngine.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityEngine.CoreModule"><HintPath>$(RimWorldManagedPath)/UnityEngine.CoreModule.dll</HintPath><Private>false</Private></Reference>
+  </ItemGroup>
+  <ItemGroup Condition="'$(ModVersion)' == '1.7'">
+    <Reference Include="UnityStubs"><HintPath>$(RimWorldManagedPath)/UnityStubs.dll</HintPath><Private>false</Private></Reference>
+  </ItemGroup>
+</Project>

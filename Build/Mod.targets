@@ -1,0 +1,9 @@
+<Project>
+  <Target Name="CheckModReferences" BeforeTargets="ResolveAssemblyReferences">
+    <Error Condition="!Exists('$(RimWorldManagedPath)/Assembly-CSharp.dll')" Text="Missing RimWorld $(ModVersion) DLL. Set RimWorldManagedPath to the matching game reference directory." />
+    <Error Condition="!Exists('$(HarmonyAssemblyPath)')" Text="Missing Harmony DLL. Set HarmonyAssemblyPath to Harmony for RimWorld $(ModVersion)." />
+  </Target>
+  <Target Name="StageModAssembly" AfterTargets="Build">
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ModRoot)/$(ModVersion)/Assemblies" />
+  </Target>
+</Project>

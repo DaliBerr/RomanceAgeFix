@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <ModVersion>1.6</ModVersion>
+    <TargetFramework>net472</TargetFramework>
+
+  </PropertyGroup>
+  <Import Project="../../Build/Mod.props" />
+
+  <Import Project="../../Build/Mod.targets" />
+</Project>

@@ -16,7 +16,8 @@ namespace RomanceAgeFix.HarmonyPatches
         {
 
             Pawn pawn = ___pawn;
-            if (pawn.ageTracker.AgeBiologicalYears < requiredMinAge || otherPawn.ageTracker.AgeBiologicalYears < requiredMinAge)
+            if (pawn?.ageTracker == null || otherPawn?.ageTracker == null
+                || pawn.ageTracker.AgeBiologicalYears < requiredMinAge || otherPawn.ageTracker.AgeBiologicalYears < requiredMinAge)
             {
                 __result = 0f;
                 return;
@@ -52,7 +53,7 @@ namespace RomanceAgeFix.HarmonyPatches
         }
         public static float SecondaryLovinChanceFactor(Pawn pawn, Pawn otherPawn, float minRequiredAge)
         {
-            if (pawn == otherPawn)
+            if (pawn?.ageTracker == null || otherPawn?.ageTracker == null || pawn == otherPawn)
             {
                 // Log.Warning("pawn "+ pawn.Name + "with "+ otherPawn.Name +" def: " + pawn.def + " otherPawn: " + otherPawn.def);
                 return 0f;
@@ -117,7 +118,7 @@ namespace RomanceAgeFix.HarmonyPatches
                 float lower = age1 - malelower;
                 float upper = age1 + maleupper;
                 float max = age1 + malemax;
-                num = GenMath.FlatHill(0.2f, min, lower, upper, max, 0.2f, age1);
+                num = GenMath.FlatHill(0.2f, min, lower, upper, max, 0.2f, age2);
             }
             else if (pawn.gender == Gender.Female)
             {
@@ -138,7 +139,7 @@ namespace RomanceAgeFix.HarmonyPatches
         [HarmonyPostfix]
         public static void GetLovinMtbHours_Postfix(Pawn pawn, Pawn partner, ref float __result)
         {
-            if (pawn.Dead || partner.Dead)
+            if (pawn == null || partner == null || pawn.Dead || partner.Dead)
             {
                 __result = -1f;
                 return;
@@ -152,7 +153,7 @@ namespace RomanceAgeFix.HarmonyPatches
                 // return 0.1f;
             }
 
-            if (pawn.needs.food.Starving || partner.needs.food.Starving)
+            if (pawn.needs?.food?.Starving == true || partner.needs?.food?.Starving == true)
             {
                 __result = -1f;
                 return;
@@ -239,7 +240,7 @@ namespace RomanceAgeFix.HarmonyPatches
         LordJob_Ritual jobRitual,
         float progress)
         {
-            if (__instance is RitualOutcomeEffectWorker_ChildBirth && jobRitual.assignments.FirstAssignedPawn("mother") is Pawn mother)
+            if (__instance is RitualOutcomeEffectWorker_ChildBirth && jobRitual?.assignments?.FirstAssignedPawn("mother") is Pawn mother)
             {
                 __result = Utils.GetQuality((RitualOutcomeEffectWorker_ChildBirth)__instance, jobRitual, progress, mother);
                 // Log.Warning("Skipping original GetQuality method ");
@@ -263,7 +264,7 @@ namespace RomanceAgeFix.HarmonyPatches
         [HarmonyPostfix]
         public static void ShouldHaveThought_Postfix(Pawn p, ref ThoughtState __result)
         {
-            if (p.Faction != Faction.OfPlayer)
+            if (p == null || p.Faction != Faction.OfPlayer)
             {
                 __result = ThoughtState.Inactive;
                 return;
@@ -278,7 +279,7 @@ namespace RomanceAgeFix.HarmonyPatches
                 __result = ThoughtState.Inactive;
                 return;
 			}
-            if (AgeFix.AgeReversalDemandedAgeOverride(p) < (25f / 80f))
+            if (!AgeScale.NeedsAgeReversal(AgeFix.AgeReversalDemandedAgeOverride(p)))
             {
                 __result = ThoughtState.Inactive;
                 return;

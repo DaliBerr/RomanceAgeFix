@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <ModVersion>1.7</ModVersion>
+    <TargetFramework>net10.0</TargetFramework>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+  <Import Project="../../Build/Mod.props" />
+  <ItemGroup>
+    <Compile Include="../../1.6/Source/Core/**/*.cs" Link="Core/%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="../../1.6/Source/HarmonyPatches/**/*.cs" Link="HarmonyPatches/%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="../../1.6/Source/Startup/**/*.cs" Link="Startup/%(RecursiveDir)%(Filename)%(Extension)" />
+  </ItemGroup>
+  <Import Project="../../Build/Mod.targets" />
+</Project>
